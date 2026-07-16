@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>En un coup d'œil</title>
+    <style>
+        :root { --accent-color: #ff6b81; --bg-card: #ffffff; --text-main: #2f3542; --text-muted: #747d8c; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: var(--text-main); background: transparent; margin: 0; padding: 10px; display: flex; align-items: center; justify-content: center; }
+        .stats-dashboard { width: 100%; max-width: 650px; background: #fafafa; border-radius: 16px; padding: 20px; box-sizing: border-box; border: 1px solid #eaeaea; }
+        .stats-header { font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 15px; display: flex; align-items: center; gap: 6px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .stat-card { background: var(--bg-card); border: 1px solid #e6e6e6; border-radius: 12px; padding: 14px 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.02); }
+        .stat-number { font-size: 20px; font-weight: 700; color: var(--accent-color); margin-bottom: 4px; font-family: 'Georgia', serif; }
+        .stat-number.text-mode { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.2; }
+        .stat-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
+    </style>
+</head>
+<body>
+    <div class="stats-dashboard">
+        <div class="stats-header">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <span id="active-project-title">STATS</span>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-number" id="box-1">-</div><div class="stat-label">Tomes</div></div>
+            <div class="stat-card"><div class="stat-number" id="box-2">-</div><div class="stat-label">Personnages</div></div>
+            <div class="stat-card"><div class="stat-number" id="box-3">-</div><div class="stat-label">Lieux</div></div>
+            <div class="stat-card"><div class="stat-number" id="box-4">-</div><div class="stat-label">Espèces</div></div>
+            <div class="stat-card"><div class="stat-number" id="box-5">-</div><div class="stat-label">Chapitres</div></div>
+            <div class="stat-card"><div class="stat-number" id="box-6">-</div><div class="stat-label">Mots écrits</div></div>
+            <div class="stat-card"><div class="stat-number" id="box-7">-</div><div class="stat-label">Période</div></div>
+            <div class="stat-card"><div class="stat-number text-mode" id="box-8">-</div><div class="stat-label">Genre</div></div>
+        </div>
+    </div>
+    <script>
+        const p = new URLSearchParams(window.location.search);
+        document.getElementById("active-project-title").innerText = (p.get('title') || "SAGA") + " • EN UN COUP D'ŒIL";
+        document.documentElement.style.setProperty('--accent-color', p.get('color') || '#ff6b81');
+        for (let i = 1; i <= 8; i++) {
+            document.getElementById(`box-${i}`).innerText = p.get(`c${i}`) || "-";
+        }
+    </script>
+</body>
+</html>

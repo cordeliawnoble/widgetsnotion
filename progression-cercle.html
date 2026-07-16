@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Progression Circulaire</title>
+    <style>
+        :root { --grad-color-1: #ff6b81; --grad-color-2: #ff4757; --bg-circle-color: rgba(140, 123, 112, 0.15); }
+        body { margin: 0; padding: 5px; background: transparent; font-family: 'Georgia', serif; color: #2c1a04; display: flex; flex-direction: column; align-items: center; }
+        .widget-container { display: flex; flex-direction: column; align-items: center; gap: 8px; width: 100%; }
+        .card-title { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; color: #8c7b70; margin: 0; }
+        .circle-container { position: relative; width: 160px; height: 160px; display: flex; align-items: center; justify-content: center; }
+        svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+        circle { fill: none; stroke-width: 10; stroke-linecap: round; }
+        .circle-bg { stroke: var(--bg-circle-color); }
+        .circle-progress { stroke: url(#gradient); transition: stroke-dashoffset 0.5s ease-in-out; }
+        .circle-text { position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .percent-val { font-size: 26px; font-weight: bold; background: linear-gradient(135deg, var(--grad-color-1), var(--grad-color-2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .ratio-txt { font-size: 10px; color: #8c7b70; font-style: italic; margin-top: 2px; }
+    </style>
+</head>
+<body>
+    <div class="widget-container">
+        <div class="card-title" id="valTitle">Objectif</div>
+        <div class="circle-container">
+            <svg viewBox="0 0 120 120">
+                <defs>
+                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" id="stop1" stop-color="#ff6b81" />
+                        <stop offset="100%" id="stop2" stop-color="#ff4757" />
+                    </linearGradient>
+                </defs>
+                <circle class="circle-bg" cx="60" cy="60" r="50"></circle>
+                <circle class="circle-progress" id="progressBar" cx="60" cy="60" r="50" stroke-dasharray="314.16" stroke-dashoffset="314.16"></circle>
+            </svg>
+            <div class="circle-text">
+                <span class="percent-val" id="valPercent">0%</span>
+                <span class="ratio-txt" id="valRatio">0 / 0</span>
+            </div>
+        </div>
+    </div>
+    <script>
+        const p = new URLSearchParams(window.location.search);
+        const label = p.get('label') || "Objectif";
+        const score = parseInt(p.get('score')) || 0;
+        const total = parseInt(p.get('total')) || 100;
+        const col1 = p.get('color1') || "#ff6b81";
+        const col2 = p.get('color2') || "#ff4757";
+
+        document.getElementById('valTitle').innerText = label;
+        document.getElementById('stop1').setAttribute('stop-color', col1);
+        document.getElementById('stop2').setAttribute('stop-color', col2);
+
+        const pct = total > 0 ? Math.min(100, Math.round((score / total) * 100)) : 0;
+        document.getElementById('valPercent').innerText = pct + '%';
+        document.getElementById('valRatio').innerText = `${score.toLocaleString('fr-FR')} / ${total.toLocaleString('fr-FR')}`;
+
+        const circ = 2 * Math.PI * 50;
+        document.getElementById('progressBar').style.strokeDashoffset = circ - (pct / 100) * circ;
+    </script>
+</body>
+</html>

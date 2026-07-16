@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bandeau Stats</title>
+    <style>
+        body { margin: 0; padding: 5px; background: transparent; font-family: 'Georgia', serif; color: #2c1a04; display: flex; flex-direction: column; align-items: center; }
+        .bandeau-container { display: flex; align-items: center; justify-content: space-around; background: #ffffff; border: 1px solid rgba(140, 123, 112, 0.2); border-radius: 12px; padding: 15px; width: 100%; max-width: 600px; box-shadow: 0 4px 10px rgba(0,0,0,0.01); box-sizing: border-box; }
+        .stat-item { text-align: center; }
+        .stat-val { font-size: 20px; font-weight: bold; color: #ff4757; }
+        .stat-lbl { font-size: 10px; text-transform: uppercase; color: #8c7b70; letter-spacing: 0.5px; margin-top: 2px; }
+        .divider { width: 1px; height: 30px; background: rgba(140, 123, 112, 0.2); }
+        .config-trigger { font-size: 9px; color: #8c7b70; cursor: pointer; opacity: 0.4; margin-top: 5px; text-decoration: underline; font-family: sans-serif; }
+        .config-trigger:hover { opacity: 1; }
+        .config-panel { display: none; background: #ffffff; border: 1px solid rgba(140, 123, 112, 0.3); border-radius: 12px; padding: 15px; width: 260px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-top: 10px; font-size: 12px; font-family: sans-serif; }
+        .form-group { margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .form-group input { width: 120px; padding: 4px; border: 1px solid #ced6e0; border-radius: 4px; }
+        .btn-save { background: linear-gradient(135deg, #ff6b81, #ff4757); color: white; border: none; padding: 6px; border-radius: 4px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 8px; }
+    </style>
+</head>
+<body>
+
+    <div class="bandeau-container">
+        <div class="stat-item"><div class="stat-val" id="v1">3</div><div class="stat-lbl">Romans Publiés</div></div>
+        <div class="divider"></div>
+        <div class="stat-item"><div class="stat-val" id="v2">2</div><div class="stat-lbl">En Cours</div></div>
+        <div class="divider"></div>
+        <div class="stat-item"><div class="stat-val" id="v3">150K</div><div class="stat-lbl">Mots Écrits 2026</div></div>
+    </div>
+
+    <div class="config-trigger" onclick="toggleConfig()">⚙️ Configuration Bandeau</div>
+
+    <form name="bandeau-stats-data" method="POST" data-netlify="true" class="config-panel" id="configPanel" action="./stats-bandeau.html?success=true">
+        <input type="hidden" name="form-name" value="bandeau-stats-data" />
+        <div class="form-group"><label>Publiés :</label><input type="text" name="p1" id="in1" value="3"></div>
+        <div class="form-group"><label>En cours :</label><input type="text" name="p2" id="in2" value="2"></div>
+        <div class="form-group"><label>Mots Année :</label><input type="text" name="p3" id="in3" value="150K"></div>
+        <button type="submit" class="btn-save">Enregistrer</button>
+    </form>
+
+    <script>
+        function toggleConfig() { const p = document.getElementById('configPanel'); p.style.display = p.style.display === 'block' ? 'none' : 'block'; }
+        const urlP = new URLSearchParams(window.location.search);
+        if(urlP.has('success')) {
+            localStorage.setItem('b_1', document.getElementById('in1').value);
+            localStorage.setItem('b_2', document.getElementById('in2').value);
+            localStorage.setItem('b_3', document.getElementById('in3').value);
+        }
+        if(localStorage.getItem('b_1')) {
+            document.getElementById('v1').innerText = localStorage.getItem('b_1');
+            document.getElementById('v2').innerText = localStorage.getItem('b_2');
+            document.getElementById('v3').innerText = localStorage.getItem('b_3');
+            document.getElementById('in1').value = localStorage.getItem('b_1');
+            document.getElementById('in2').value = localStorage.getItem('b_2');
+            document.getElementById('in3').value = localStorage.getItem('b_3');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Suivi d'Écriture</title>
+    <style>
+        :root {
+            --grad-color-1: #ff6b81;
+            --grad-color-2: #ff4757;
+            --ornament-color: #d4af37;
+        }
+
+        body {
+            margin: 0;
+            padding: 5px;
+            background: transparent;
+            font-family: 'Georgia', serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .widget-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .active-novel-banner {
+            font-size: 13px;
+            font-style: italic;
+            color: #8c7b70;
+            margin-bottom: 2px;
+            letter-spacing: 0.5px;
+            font-weight: bold;
+        }
+
+        .dashboard-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            max-width: 600px;
+            flex-wrap: nowrap;
+        }
+
+        .kpi-card {
+            background: #ffffff;
+            border: 1px solid rgba(140, 123, 112, 0.25);
+            outline: 1px solid rgba(140, 123, 112, 0.1);
+            outline-offset: -3px;
+            border-radius: 12px;
+            width: 180px; 
+            height: 260px;
+            flex-shrink: 0;
+            box-sizing: border-box;
+            padding: 15px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            text-align: center;
+            color: #2c1a04;
+        }
+
+        .card-header { display: flex; flex-direction: column; align-items: center; width: 100%; }
+        
+        .card-title {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            color: #2c1a04;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin: 0;
+        }
+
+        .card-main-value {
+            font-size: 26px;
+            font-weight: bold;
+            margin: 4px 0;
+            background: linear-gradient(135deg, var(--grad-color-1), var(--grad-color-2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .ornament { font-size: 8px; color: var(--ornament-color); opacity: 0.5; margin: 1px 0; user-select: none; }
+        .card-middle { display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; width: 100%; }
+        .card-footer { width: 100%; display: flex; flex-direction: column; align-items: center; }
+
+        .text-medium { font-size: 12.5px; font-weight: bold; margin: 1px 0; color: #2c1a04; }
+        .text-sub { font-size: 10.5px; color: #8c7b70; font-style: italic; margin: 1px 0; }
+        .calendar-icon { font-size: 22px; color: #8c7b70; opacity: 0.45; margin: 2px 0; }
+    </style>
+</head>
+<body>
+
+    <div class="widget-container">
+        <!-- Titre du Roman -->
+        <div class="active-novel-banner" id="activeNovelTitle">« ... »</div>
+
+        <div class="dashboard-container">
+            
+            <!-- BLOC 1 : PHASE -->
+            <div class="kpi-card">
+                <div class="card-header">
+                    <div class="card-title" id="valPhaseLabel">✒️ Premier Jet</div>
+                    <div class="card-main-value" id="valPourcentMots">0 %</div>
+                    <div class="ornament">❧ ═══ ⚙ ═══ ☙</div>
+                </div>
+                <div class="card-middle">
+                    <div class="text-medium" id="valMotsRatio">0 / 0</div>
+                    <div class="text-sub">mots traités</div>
+                </div>
+                <div class="card-footer">
+                    <div class="ornament">✦ ═ ✦</div>
+                    <div class="text-sub" id="valMotsRestants">Encore 0 mots</div>
+                </div>
+            </div>
+
+            <!-- BLOC 2 : CHAPITRES -->
+            <div class="kpi-card">
+                <div class="card-header">
+                    <div class="card-title">📖 Chapitres</div>
+                    <div class="card-main-value" id="valChapRatio">0 / 0</div>
+                    <div class="ornament">❧ ═══ ⚙ ═══ ☙</div>
+                </div>
+                <div class="card-middle">
+                    <div class="text-sub" id="valChapRestants">0 restants</div>
+                    <div style="font-size: 18px; margin-top: 4px; opacity: 0.65;">📖</div>
+                </div>
+                <div class="card-footer">
+                    <div class="ornament">✦ ═ ✦</div>
+                    <div class="text-medium" id="valChapActuel">Chapitre 0</div>
+                </div>
+            </div>
+
+            <!-- BLOC 3 : ESTIMATION -->
+            <div class="kpi-card">
+                <div class="card-header">
+                    <div class="card-title">⏳ Estimation</div>
+                    <div class="calendar-icon">📅</div>
+                    <div class="ornament">❧ ═══ ⚙ ═══ ☙</div>
+                </div>
+                <div class="card-middle">
+                    <div class="text-sub">Fin estimée :</div>
+                    <div class="text-medium" style="font-size: 14px;" id="valEstiTemps">-</div>
+                </div>
+                <div class="card-footer">
+                    <div class="ornament">✦ ═ ✦</div>
+                    <div class="text-sub">Objectif final</div>
+                    <div class="text-medium" id="valObjFinal">0 mots</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        const titre = urlParams.get('titre') || "Sans titre";
+        const phase = urlParams.get('phase') || "Premier Jet";
+        const mots = parseInt(urlParams.get('mots')) || 0;
+        const total = parseInt(urlParams.get('total')) || 0;
+        const chap = parseInt(urlParams.get('chap')) || 0;
+        const chaptotal = parseInt(urlParams.get('chaptotal')) || 0;
+        const estimation = urlParams.get('estimation') || "-";
+        const col1 = urlParams.get('color1') || "#ff6b81";
+        const col2 = urlParams.get('color2') || "#ff4757";
+
+        // Application des couleurs dynamiques
+        document.documentElement.style.setProperty('--grad-color-1', col1);
+        document.documentElement.style.setProperty('--grad-color-2', col2);
+
+        const pourcent = total > 0 ? Math.round((mots / total) * 100) : 0;
+        const motsRestants = Math.max(0, total - mots);
+        const chapRestants = Math.max(0, chaptotal - chap);
+
+        document.getElementById('activeNovelTitle').innerText = `« ${titre} »`;
+        document.getElementById('valPhaseLabel').innerText = `✒️ ${phase}`;
+        document.getElementById('valPourcentMots').innerText = pourcent + ' %';
+        document.getElementById('valMotsRatio').innerText = `${mots.toLocaleString('fr-FR')} / ${total.toLocaleString('fr-FR')}`;
+        document.getElementById('valMotsRestants').innerText = motsRestants > 0 ? `Encore ${motsRestants.toLocaleString('fr-FR')} mots` : "🎉 Objectif atteint !";
+
+        document.getElementById('valChapRatio').innerText = `${chap} / ${chaptotal}`;
+        document.getElementById('valChapRestants').innerText = `${chapRestants} restant${chapRestants > 1 ? 's' : ''}`;
+        document.getElementById('valChapActuel').innerText = `Chapitre ${chap}`;
+
+        document.getElementById('valEstiTemps').innerText = estimation;
+        document.getElementById('valObjFinal').innerText = total.toLocaleString('fr-FR') + ' mots';
+    </script>
+</body>
+</html>

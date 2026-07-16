@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Suivi Éditorial</title>
+    <style>
+        body { margin: 0; padding: 10px; background: transparent; font-family: 'Georgia', serif; display: flex; align-items: center; justify-content: center; }
+        .stats-row { display: flex; justify-content: center; gap: 12px; width: 100%; max-width: 800px; flex-wrap: wrap; }
+        .stat-card { background: #fdfbf7; border: 1px solid #f3ebe3; border-radius: 12px; padding: 14px 12px; min-width: 140px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(44,26,4,0.02); }
+        .card-header { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; color: #8c7b70; font-weight: bold; margin-bottom: 8px; }
+        .card-value { font-size: 17px; font-weight: bold; color: #2c1a04; margin-bottom: 4px; text-align: center; }
+        .card-sub { font-size: 10.5px; color: #8c7b70; font-style: italic; }
+    </style>
+</head>
+<body>
+    <div class="stats-row">
+        <div class="stat-card"><div class="card-header"><span>📖</span><span>Livres publiés</span></div><div class="card-value" id="v1">-</div><div class="card-sub">ebooks</div></div>
+        <div class="stat-card"><div class="card-header"><span>💰</span><span>Chiffre d'affaires</span></div><div class="card-value" id="v2">-</div><div class="card-sub">ce mois</div></div>
+        <div class="stat-card"><div class="card-header"><span>⏳</span><span>Prochaine sortie</span></div><div class="card-value" id="v3">-</div><div class="card-sub">Date cible</div></div>
+        <div class="stat-card"><div class="card-header"><span>📋</span><span>Tâches urgentes</span></div><div class="card-value" id="v4">-</div><div class="card-sub">à traiter</div></div>
+        <div class="stat-card"><div class="stat-card-inner"><div class="card-header"><span>🌐</span><span>Plateformes actives</span></div><div class="card-value" id="v5">-</div><div class="card-sub">surveillance</div></div></div>
+    </div>
+    <script>
+        const p = new URLSearchParams(window.location.search);
+        for(let i = 1; i <= 5; i++) {
+            document.getElementById(`v${i}`).innerText = p.get(`v${i}`) || "-";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Progression Globale</title>
+    <style>
+        :root {
+            --bg-line-color: #e4e7eb;
+            --text-main: #2f3542;
+            --accent-color: #ff6b81;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: var(--text-main);
+            background: transparent;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .widget-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            max-width: 750px;
+        }
+
+        .novel-title {
+            font-family: 'Georgia', serif;
+            font-size: 14px;
+            font-style: italic;
+            font-weight: bold;
+            color: #8c7b70;
+            margin-bottom: 5px;
+        }
+
+        .timeline-wrapper {
+            position: relative;
+            width: 100%;
+            padding: 20px 0;
+            box-sizing: border-box;
+        }
+
+        .timeline-container {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .timeline-line-bg {
+            position: absolute;
+            top: 23px; left: 0; right: 0;
+            height: 4px;
+            background-color: var(--bg-line-color);
+            z-index: 1;
+            border-radius: 2px;
+        }
+
+        .timeline-active-line {
+            position: absolute;
+            top: 23px; left: 0;
+            height: 4px;
+            background-color: var(--accent-color);
+            z-index: 2;
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 2px;
+        }
+
+        .step-item {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 80px;
+        }
+
+        .step-circle {
+            width: 46px; height: 46px;
+            border-radius: 50%;
+            background-color: #ffffff;
+            border: 2px solid var(--bg-line-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.4s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .step-item.active .step-circle {
+            border-color: var(--accent-color);
+            background-color: #ffffff;
+        }
+
+        .step-item.checked-step .step-circle {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .step-item.current-step .step-circle {
+            background-color: #ffffff;
+            border-width: 3px;
+            box-shadow: 0 0 0 4px rgba(255, 107, 129, 0.2);
+        }
+
+        .step-label {
+            margin-top: 10px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #747d8c;
+            text-align: center;
+        }
+
+        .step-item.active .step-label {
+            color: var(--text-main);
+        }
+
+        .step-date {
+            margin-top: 2px;
+            font-size: 10px;
+            color: #9ed4b1;
+            font-style: italic;
+            text-align: center;
+        }
+
+        .step-item.current-step .step-date {
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="widget-container">
+        <div class="novel-title" id="novelTitle">SAGA / ROMAN</div>
+
+        <div class="timeline-wrapper">
+            <div class="timeline-line-bg"></div>
+            <div class="timeline-active-line" id="timeline-active-line"></div>
+
+            <div class="timeline-container">
+                <div class="step-item" id="step-1"><div class="step-circle">📝</div><div class="step-label">Plan</div><div class="step-date" id="date-1">-</div></div>
+                <div class="step-item" id="step-2"><div class="step-circle">✍️</div><div class="step-label">Draft</div><div class="step-date" id="date-2">-</div></div>
+                <div class="step-item" id="step-3"><div class="step-circle">⚙️</div><div class="step-label">Édition</div><div class="step-date" id="date-3">-</div></div>
+                <div class="step-item" id="step-4"><div class="step-circle">🔍</div><div class="step-label">Corr.</div><div class="step-date" id="date-4">-</div></div>
+                <div class="step-item" id="step-5"><div class="step-circle">🎨</div><div class="step-label">Mep</div><div class="step-date" id="date-5">-</div></div>
+                <div class="step-item" id="step-6"><div class="step-circle">🚀</div><div class="step-label">Publié</div><div class="step-date" id="date-6">-</div></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const p = new URLSearchParams(window.location.search);
+        
+        const title = p.get('title') || "Roman";
+        const currentStep = Math.min(6, Math.max(1, parseInt(p.get('step')) || 1));
+        const color = p.get('color') || "#ff6b81";
+
+        document.getElementById("novelTitle").innerText = `« ${title} »`;
+        document.documentElement.style.setProperty('--accent-color', color);
+
+        // Injecter les dates
+        for (let i = 1; i <= 6; i++) {
+            document.getElementById(`date-${i}`).innerText = p.get(`d${i}`) || "-";
+            
+            const stepEl = document.getElementById(`step-${i}`);
+            if (i < currentStep) {
+                stepEl.classList.add("active", "checked-step");
+            } else if (i === currentStep) {
+                stepEl.classList.add("active", "current-step");
+            }
+        }
+
+        // Gérer la largeur de la ligne active
+        const lineWidth = (currentStep - 1) * 20;
+        document.getElementById("timeline-active-line").style.width = lineWidth + "%";
+    </script>
+</body>
+</html>
