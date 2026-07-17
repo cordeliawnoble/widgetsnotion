@@ -196,6 +196,31 @@
             <div class="links-area" id="links-checklist"></div>
         </div>
 
+        <!-- 7. JOURNAL DE BORD -->
+        <div class="section-widget">
+            <div class="section-title">📔 Widget : Journal de Bord</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Titre du Journal</th>
+                        <th>Date (ou "auto")</th>
+                        <th>Objectif du jour</th>
+                        <th>Chapitres travaillés</th>
+                        <th>Décision importante</th>
+                        <th>Idée / Inspiration</th>
+                        <th>Lien Illustration</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="rows-journal"></tbody>
+            </table>
+            <div class="btn-group">
+                <button class="add-btn" onclick="addJournal()">➕ Ajouter un journal</button>
+                <button class="save-btn" onclick="saveAll()">💾 Enregistrer et Générer les liens</button>
+            </div>
+            <div class="links-area" id="links-journal"></div>
+        </div>
+
     </div>
 
     <script>
@@ -217,6 +242,9 @@
         ];
         let listChecklist = JSON.parse(localStorage.getItem('v2_checklist')) || [
             { title: "Le Bouquet de la Mariée", step: 2, d1: "Jan 2026", d2: "En cours", d3: "-", d4: "-", d5: "-", d6: "-", color: "#ff6b81" }
+        ];
+        let listJournal = JSON.parse(localStorage.getItem('v2_journal')) || [
+            { title: "Journal de Bord", date: "auto", obj: "Relire les chapitres 8 à 11", chap: "8, 9, 10", deci: "", idee: "", illu: "" }
         ];
 
         function buildTables() {
@@ -317,6 +345,21 @@
                 </tr>`;
             });
 
+            // 7. Table Journal de Bord
+            const rJournal = document.getElementById("rows-journal"); rJournal.innerHTML = "";
+            listJournal.forEach((d, i) => {
+                rJournal.innerHTML += `<tr>
+                    <td><input type="text" class="title-input" value="${d.title}" oninput="listJournal[${i}].title=this.value"></td>
+                    <td><input type="text" style="width:80px;" value="${d.date}" oninput="listJournal[${i}].date=this.value"></td>
+                    <td><textarea oninput="listJournal[${i}].obj=this.value">${d.obj}</textarea></td>
+                    <td><textarea oninput="listJournal[${i}].chap=this.value">${d.chap}</textarea></td>
+                    <td><textarea oninput="listJournal[${i}].deci=this.value">${d.deci}</textarea></td>
+                    <td><textarea oninput="listJournal[${i}].idee=this.value">${d.idee}</textarea></td>
+                    <td><input type="text" value="${d.illu}" oninput="listJournal[${i}].illu=this.value"></td>
+                    <td><button class="delete-btn" onclick="deleteItem('journal', ${i})">🗑️</button></td>
+                </tr>`;
+            });
+
             generateAllLinks();
         }
 
@@ -327,6 +370,7 @@
         function addFiche() { listFiche.push({ title: "Nouveau Roman", genre: "Romance", sub: "-", univ: "-", amb: "Mots", tropes: "Tropes", quote: "", illu: "", color1: "#ff6b81", color2: "#ff4757" }); buildTables(); }
         function addEditorial() { listEditorial.push({ name: "Suivi Éditorial", v1: "0", v2: "0 €", v3: "-", v4: "0", v5: "0 sur 0" }); buildTables(); }
         function addChecklist() { listChecklist.push({ title: "Nouveau Roman", step: 1, d1: "-", d2: "-", d3: "-", d4: "-", d5: "-", d6: "-", color: "#ff6b81" }); buildTables(); }
+        function addJournal() { listJournal.push({ title: "Journal de Bord", date: "auto", obj: "", chap: "", deci: "", idee: "", illu: "" }); buildTables(); }
 
         // --- SUPPRESSIONS ---
         function deleteItem(type, index) {
@@ -336,6 +380,7 @@
             if (type === 'fiche') listFiche.splice(index, 1);
             if (type === 'editorial') listEditorial.splice(index, 1);
             if (type === 'checklist') listChecklist.splice(index, 1);
+            if (type === 'journal') listJournal.splice(index, 1);
             buildTables();
         }
 
@@ -347,6 +392,7 @@
             localStorage.setItem('v2_fiche', JSON.stringify(listFiche));
             localStorage.setItem('v2_editorial', JSON.stringify(listEditorial));
             localStorage.setItem('v2_checklist', JSON.stringify(listChecklist));
+            localStorage.setItem('v2_journal', JSON.stringify(listJournal));
             generateAllLinks();
             alert("Sauvegarde réussie ! Vos liens magiques sont à jour.");
         }
@@ -418,6 +464,13 @@
             listChecklist.forEach(c => {
                 const url = `${baseUrl}checklist.html?title=${encodeURIComponent(c.title)}&step=${c.step}&d1=${encodeURIComponent(c.d1)}&d2=${encodeURIComponent(c.d2)}&d3=${encodeURIComponent(c.d3)}&d4=${encodeURIComponent(c.d4)}&d5=${encodeURIComponent(c.d5)}&d6=${encodeURIComponent(c.d6)}&color=${encodeURIComponent(c.color)}`;
                 createRow("links-checklist", c.title, url);
+            });
+
+            // 7. Journal de Bord
+            const lJournal = document.getElementById("links-journal"); lJournal.innerHTML = "<strong>Liens Journal de Bord :</strong>";
+            listJournal.forEach(j => {
+                const url = `${baseUrl}journal-de-bord.html?title=${encodeURIComponent(j.title)}&date=${encodeURIComponent(j.date)}&obj=${encodeURIComponent(j.obj)}&chap=${encodeURIComponent(j.chap)}&deci=${encodeURIComponent(j.deci)}&idee=${encodeURIComponent(j.idee)}&illu=${encodeURIComponent(j.illu)}`;
+                createRow("links-journal", j.title, url);
             });
         }
 
