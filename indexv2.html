@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Mon Bureau d'Écriture - Centrale de Commande</title>
+    <style>
+        body { font-family: 'Georgia', serif; background: #fcfbf9; color: #2c1a04; padding: 30px; display: flex; flex-direction: column; align-items: center; }
+        .container { max-width: 1000px; width: 100%; background: white; padding: 25px; border-radius: 12px; border: 1px solid rgba(140,123,112,0.2); box-shadow: 0 4px 15px rgba(0,0,0,0.02); box-sizing: border-box; }
+        h1 { font-style: italic; color: #8c7b70; text-align: center; font-size: 26px; margin-bottom: 5px; }
+        .subtitle { text-align: center; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #a19286; margin-bottom: 30px; }
+        
+        .section-widget { background: #faf8f5; border: 1px solid rgba(140,123,112,0.15); border-radius: 12px; padding: 20px; margin-bottom: 25px; }
+        .section-title { font-size: 16px; font-weight: bold; color: #2c1a04; margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid rgba(140,123,112,0.2); padding-bottom: 5px; }
+        
+        table { border-collapse: collapse; width: 100%; margin-bottom: 15px; }
+        th, td { padding: 6px 4px; text-align: left; font-size: 11px; color: #57606f; font-family: sans-serif; }
+        th { border-bottom: 2px solid #f1f2f6; }
+        
+        input[type="text"], input[type="number"], textarea {
+            width: 100%; padding: 5px; border: 1px solid #ced6e0; border-radius: 6px; font-size: 11px; box-sizing: border-box; text-align: center;
+        }
+        input[type="text"].title-input { text-align: left; }
+        textarea { resize: vertical; height: 32px; }
+
+        .btn-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .add-btn { background: #2ed573; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: bold; font-family: sans-serif; }
+        .save-btn { background: #1e90ff; color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; font-weight: bold; font-family: sans-serif; }
+        .delete-btn { background: none; border: none; color: #ff4757; cursor: pointer; font-size: 13px; }
+        
+        .links-area { background: white; padding: 10px; border-radius: 8px; border: 1px solid #eee; margin-top: 10px; }
+        .link-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px dashed #eee; font-family: sans-serif; font-size: 12px; }
+        .link-row:last-child { border-bottom: none; }
+        .copy-btn { background: #ff4757; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Atelier d'Écriture</h1>
+        <div class="subtitle">Centrale de Commande des Widgets Notion</div>
+
+        <!-- 1. SUIVI D'ÉCRITURE -->
+        <div class="section-widget">
+            <div class="section-title">✍️ Widget : Suivis d'Écriture Avancés</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Roman</th>
+                        <th>Phase</th>
+                        <th>Mots Écrits</th>
+                        <th>Objectif Mots</th>
+                        <th>Chap. Écrits</th>
+                        <th>Total Chap.</th>
+                        <th>Estimation</th>
+                        <th>Couleur 1</th>
+                        <th>Couleur 2</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="rows-suivi"></tbody>
+            </table>
+            <div class="btn-group">
+                <button class="add-btn" onclick="addSuivi()">➕ Ajouter un roman</button>
+                <button class="save-btn" onclick="saveAll()">💾 Enregistrer et Générer les liens</button>
+            </div>
+            <div class="links-area" id="links-suivi"></div>
+        </div>
+
+        <!-- 2. CERCLES DE PROGRESSION -->
+        <div class="section-widget">
+            <div class="section-title">⭕ Widget : Cercles de Progression</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Titre de l'Objectif</th>
+                        <th>Score Actuel</th>
+                        <th>Score Total</th>
+                        <th>Couleur 1</th>
+                        <th>Couleur 2</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="rows-cercle"></tbody>
+            </table>
+            <div class="btn-group">
+                <button class="add-btn" onclick="addCercle()">➕ Ajouter un objectif</button>
+                <button class="save-btn" onclick="saveAll()">💾 Enregistrer et Générer les liens</button>
+            </div>
+            <div class="links-area" id="links-cercle"></div>
+        </div>
+
+        <!-- 3. STATS DE SAGA (EN UN COUP D'ŒIL) -->
+        <div class="section-widget">
+            <div class="section-title">👁️ Widget : Stats de Sagas (En un coup d'œil)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Saga / Roman</th>
+                        <th>Tomes</th>
+                        <th>Persos</th>
+                        <th>Lieux</th>
+                        <th>Espèces</th>
+                        <th>Chap.</th>
+                        <th>Mots</th>
+                        <th>Période</th>
+                        <th>Genre</th>
+                        <th>Couleur</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="rows-saga"></tbody>
+            </table>
+            <div class="btn-group">
+                <button class="add-btn" onclick="addSaga()">➕ Ajouter une saga</button>
+                <button class="save-btn" onclick="saveAll()">💾 Enregistrer et Générer les liens</button>
+            </div>
+            <div class="links-area" id="links-saga"></div>
+        </div>
+
+        <!-- 4. FICHES PROJETS -->
+        <div class="section-widget">
+            <div class="section-title">🗂️ Widget : Fiches Projets Épurées</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Titre / Roman</th>
+                        <th>Genre</th>
+                        <th>Sous-genre</th>
+                        <th>Univers</th>
+                        <th>Ambiances</th>
+                        <th>Tropes</th>
+                        <th>Citation</th>
+                        <th>Lien Illustration</th>
+                        <th>Couleur 1</th>
+                        <th>Couleur 2</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="rows-fiche"></tbody>
+            </table>
+            <div class="btn-group">
+                <button class="add-btn" onclick="addFiche()">➕ Ajouter une fiche</button>
+                <button class="save-btn" onclick="saveAll()">💾 Enregistrer et Générer les liens</button>
+            </div>
+            <div class="links-area" id="links-fiche"></div>
+        </div>
+
+        <!-- 5. SUIVI ÉDITORIAL & BUSINESS -->
+        <div class="section-widget">
+            <div class="section-title">📊 Widget : Suivi Éditorial</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>N° Profil / Tableau</th>
+                        <th>Livres Publiés</th>
+                        <th>Chiffre d'affaires</th>
+                        <th>Prochaine Sortie</th>
+                        <th>Tâches Urgentes</th>
+                        <th>Plateformes Actives</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="rows-editorial"></tbody>
+            </table>
+            <div class="btn-group">
+                <button class="add-btn" onclick="addEditorial()">➕ Ajouter un profil</button>
+                <button class="save-btn" onclick="saveAll()">💾 Enregistrer et Générer les liens</button>
+            </div>
+            <div class="links-area" id="links-editorial"></div>
+        </div>
+
+        <!-- 6. CHECKLIST / TIMELINE DE PUBLICATION -->
+        <div class="section-widget">
+            <div class="section-title">🚀 Widget : Checklist de Publication (Timeline)</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Roman</th>
+                        <th>Étape (1-6)</th>
+                        <th>Date Plan</th>
+                        <th>Date Draft</th>
+                        <th>Date Édition</th>
+                        <th>Date Corr.</th>
+                        <th>Date Mep</th>
+                        <th>Date Publié</th>
+                        <th>Couleur</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="rows-checklist"></tbody>
+            </table>
+            <div class="btn-group">
+                <button class="add-btn" onclick="addChecklist()">➕ Ajouter un roman</button>
+                <button class="save-btn" onclick="saveAll()">💾 Enregistrer et Générer les liens</button>
+            </div>
+            <div class="links-area" id="links-checklist"></div>
+        </div>
+
+        <!-- 7. JOURNAL DE BORD -->
+        <div class="section-widget">
+            <div class="section-title">📔 Widget : Journal de Bord</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Titre du Journal</th>
+                        <th>Date (ou "auto")</th>
+                        <th>Objectif du jour</th>
+                        <th>Chapitres travaillés</th>
+                        <th>Décision importante</th>
+                        <th>Idée / Inspiration</th>
+                        <th>Lien Illustration</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="rows-journal"></tbody>
+            </table>
+            <div class="btn-group">
+                <button class="add-btn" onclick="addJournal()">➕ Ajouter un journal</button>
+                <button class="save-btn" onclick="saveAll()">💾 Enregistrer et Générer les liens</button>
+            </div>
+            <div class="links-area" id="links-journal"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- CHARGEMENT DES DONNÉES LOCALES ---
+        let listSuivi = JSON.parse(localStorage.getItem('v2_suivi')) || [
+            { title: "Le Bouquet de la Mariée", phase: "Premier Jet", motsEcrits: 74515, motsTotal: 80000, chapEcrits: 51, chapTotal: 63, estimation: "3 jours", color1: "#ff6b81", color2: "#ff4757" }
+        ];
+        let listCercle = JSON.parse(localStorage.getItem('v2_cercle')) || [
+            { label: "Objectif Écriture", score: 74515, total: 80000, color1: "#ff6b81", color2: "#ff4757" }
+        ];
+        let listSaga = JSON.parse(localStorage.getItem('v2_saga')) || [
+            { title: "Le Bouquet de la Mariée", c1: "1", c2: "15", c3: "8", c4: "1", c5: "50", c6: "120K", c7: "2024-2026", c8: "Comédie Romantique", color: "#ff6b81" }
+        ];
+        let listFiche = JSON.parse(localStorage.getItem('v2_fiche')) || [
+            { title: "Le Bouquet de la Mariée", genre: "Comédie Romantique", sub: "Humour & Destin", univ: "Paris", amb: "Fleurs, Rires, Destin", tropes: "Proximité forcée, Slow burn", quote: "Quand le destin s'en mêle...", illu: "", color1: "#ff6b81", color2: "#ff4757" }
+        ];
+        let listEditorial = JSON.parse(localStorage.getItem('v2_editorial')) || [
+            { name: "Suivi Principal", v1: "6 ebooks", v2: "12 847,50 €", v3: "18 septembre 2027", v4: "4 à traiter", v5: "5 sur 7" }
+        ];
+        let listChecklist = JSON.parse(localStorage.getItem('v2_checklist')) || [
+            { title: "Le Bouquet de la Mariée", step: 2, d1: "Jan 2026", d2: "En cours", d3: "-", d4: "-", d5: "-", d6: "-", color: "#ff6b81" }
+        ];
+        let listJournal = JSON.parse(localStorage.getItem('v2_journal')) || [
+            { title: "Journal de Bord", date: "auto", obj: "Relire les chapitres 8 à 11", chap: "8, 9, 10", deci: "", idee: "", illu: "" }
+        ];
+
+        function buildTables() {
+            // 1. Table Suivi
+            const rSuivi = document.getElementById("rows-suivi"); rSuivi.innerHTML = "";
+            listSuivi.forEach((d, i) => {
+                rSuivi.innerHTML += `<tr>
+                    <td><input type="text" class="title-input" value="${d.title}" oninput="listSuivi[${i}].title=this.value"></td>
+                    <td><input type="text" value="${d.phase}" oninput="listSuivi[${i}].phase=this.value"></td>
+                    <td><input type="number" value="${d.motsEcrits}" oninput="listSuivi[${i}].motsEcrits=parseInt(this.value)||0"></td>
+                    <td><input type="number" value="${d.motsTotal}" oninput="listSuivi[${i}].motsTotal=parseInt(this.value)||0"></td>
+                    <td><input type="number" value="${d.chapEcrits}" oninput="listSuivi[${i}].chapEcrits=parseInt(this.value)||0"></td>
+                    <td><input type="number" value="${d.chapTotal}" oninput="listSuivi[${i}].chapTotal=parseInt(this.value)||0"></td>
+                    <td><input type="text" value="${d.estimation}" oninput="listSuivi[${i}].estimation=this.value"></td>
+                    <td><input type="text" style="width:65px;" value="${d.color1}" oninput="listSuivi[${i}].color1=this.value"></td>
+                    <td><input type="text" style="width:65px;" value="${d.color2}" oninput="listSuivi[${i}].color2=this.value"></td>
+                    <td><button class="delete-btn" onclick="deleteItem('suivi', ${i})">🗑️</button></td>
+                </tr>`;
+            });
+
+            // 2. Table Cercle
+            const rCercle = document.getElementById("rows-cercle"); rCercle.innerHTML = "";
+            listCercle.forEach((d, i) => {
+                rCercle.innerHTML += `<tr>
+                    <td><input type="text" value="${d.label}" oninput="listCercle[${i}].label=this.value"></td>
+                    <td><input type="number" value="${d.score}" oninput="listCercle[${i}].score=parseInt(this.value)||0"></td>
+                    <td><input type="number" value="${d.total}" oninput="listCercle[${i}].total=parseInt(this.value)||0"></td>
+                    <td><input type="text" value="${d.color1}" oninput="listCercle[${i}].color1=this.value"></td>
+                    <td><input type="text" value="${d.color2}" oninput="listCercle[${i}].color2=this.value"></td>
+                    <td><button class="delete-btn" onclick="deleteItem('cercle', ${i})">🗑️</button></td>
+                </tr>`;
+            });
+
+            // 3. Table Saga
+            const rSaga = document.getElementById("rows-saga"); rSaga.innerHTML = "";
+            listSaga.forEach((d, i) => {
+                rSaga.innerHTML += `<tr>
+                    <td><input type="text" value="${d.title}" oninput="listSaga[${i}].title=this.value"></td>
+                    <td><input type="text" value="${d.c1}" oninput="listSaga[${i}].c1=this.value"></td>
+                    <td><input type="text" value="${d.c2}" oninput="listSaga[${i}].c2=this.value"></td>
+                    <td><input type="text" value="${d.c3}" oninput="listSaga[${i}].c3=this.value"></td>
+                    <td><input type="text" value="${d.c4}" oninput="listSaga[${i}].c4=this.value"></td>
+                    <td><input type="text" value="${d.c5}" oninput="listSaga[${i}].c5=this.value"></td>
+                    <td><input type="text" value="${d.c6}" oninput="listSaga[${i}].c6=this.value"></td>
+                    <td><input type="text" value="${d.c7}" oninput="listSaga[${i}].c7=this.value"></td>
+                    <td><input type="text" value="${d.c8}" oninput="listSaga[${i}].c8=this.value"></td>
+                    <td><input type="text" style="width:65px;" value="${d.color}" oninput="listSaga[${i}].color=this.value"></td>
+                    <td><button class="delete-btn" onclick="deleteItem('saga', ${i})">🗑️</button></td>
+                </tr>`;
+            });
+
+            // 4. Table Fiches
+            const rFiche = document.getElementById("rows-fiche"); rFiche.innerHTML = "";
+            listFiche.forEach((d, i) => {
+                rFiche.innerHTML += `<tr>
+                    <td><input type="text" value="${d.title}" oninput="listFiche[${i}].title=this.value"></td>
+                    <td><input type="text" value="${d.genre}" oninput="listFiche[${i}].genre=this.value"></td>
+                    <td><input type="text" value="${d.sub}" oninput="listFiche[${i}].sub=this.value"></td>
+                    <td><input type="text" value="${d.univ}" oninput="listFiche[${i}].univ=this.value"></td>
+                    <td><input type="text" value="${d.amb}" oninput="listFiche[${i}].amb=this.value"></td>
+                    <td><input type="text" value="${d.tropes}" oninput="listFiche[${i}].tropes=this.value"></td>
+                    <td><textarea oninput="listFiche[${i}].quote=this.value">${d.quote}</textarea></td>
+                    <td><input type="text" value="${d.illu}" oninput="listFiche[${i}].illu=this.value"></td>
+                    <td><input type="text" style="width:65px;" value="${d.color1}" oninput="listFiche[${i}].color1=this.value"></td>
+                    <td><input type="text" style="width:65px;" value="${d.color2}" oninput="listFiche[${i}].color2=this.value"></td>
+                    <td><button class="delete-btn" onclick="deleteItem('fiche', ${i})">🗑️</button></td>
+                </tr>`;
+            });
+
+            // 5. Table Éditorial
+            const rEdito = document.getElementById("rows-editorial"); rEdito.innerHTML = "";
+            listEditorial.forEach((d, i) => {
+                rEdito.innerHTML += `<tr>
+                    <td><input type="text" value="${d.name}" oninput="listEditorial[${i}].name=this.value"></td>
+                    <td><input type="text" value="${d.v1}" oninput="listEditorial[${i}].v1=this.value"></td>
+                    <td><input type="text" value="${d.v2}" oninput="listEditorial[${i}].v2=this.value"></td>
+                    <td><input type="text" value="${d.v3}" oninput="listEditorial[${i}].v3=this.value"></td>
+                    <td><input type="text" value="${d.v4}" oninput="listEditorial[${i}].v4=this.value"></td>
+                    <td><input type="text" value="${d.v5}" oninput="listEditorial[${i}].v5=this.value"></td>
+                    <td><button class="delete-btn" onclick="deleteItem('editorial', ${i})">🗑️</button></td>
+                </tr>`;
+            });
+
+            // 6. Table Checklist
+            const rCheck = document.getElementById("rows-checklist"); rCheck.innerHTML = "";
+            listChecklist.forEach((d, i) => {
+                rCheck.innerHTML += `<tr>
+                    <td><input type="text" class="title-input" value="${d.title}" oninput="listChecklist[${i}].title=this.value"></td>
+                    <td><input type="number" min="1" max="6" style="width:50px;" value="${d.step}" oninput="listChecklist[${i}].step=Math.min(6,Math.max(1,parseInt(this.value)||1))"></td>
+                    <td><input type="text" value="${d.d1}" oninput="listChecklist[${i}].d1=this.value"></td>
+                    <td><input type="text" value="${d.d2}" oninput="listChecklist[${i}].d2=this.value"></td>
+                    <td><input type="text" value="${d.d3}" oninput="listChecklist[${i}].d3=this.value"></td>
+                    <td><input type="text" value="${d.d4}" oninput="listChecklist[${i}].d4=this.value"></td>
+                    <td><input type="text" value="${d.d5}" oninput="listChecklist[${i}].d5=this.value"></td>
+                    <td><input type="text" value="${d.d6}" oninput="listChecklist[${i}].d6=this.value"></td>
+                    <td><input type="text" style="width:65px;" value="${d.color}" oninput="listChecklist[${i}].color=this.value"></td>
+                    <td><button class="delete-btn" onclick="deleteItem('checklist', ${i})">🗑️</button></td>
+                </tr>`;
+            });
+
+            // 7. Table Journal de Bord
+            const rJournal = document.getElementById("rows-journal"); rJournal.innerHTML = "";
+            listJournal.forEach((d, i) => {
+                rJournal.innerHTML += `<tr>
+                    <td><input type="text" class="title-input" value="${d.title}" oninput="listJournal[${i}].title=this.value"></td>
+                    <td><input type="text" style="width:80px;" value="${d.date}" oninput="listJournal[${i}].date=this.value"></td>
+                    <td><textarea oninput="listJournal[${i}].obj=this.value">${d.obj}</textarea></td>
+                    <td><textarea oninput="listJournal[${i}].chap=this.value">${d.chap}</textarea></td>
+                    <td><textarea oninput="listJournal[${i}].deci=this.value">${d.deci}</textarea></td>
+                    <td><textarea oninput="listJournal[${i}].idee=this.value">${d.idee}</textarea></td>
+                    <td><input type="text" value="${d.illu}" oninput="listJournal[${i}].illu=this.value"></td>
+                    <td><button class="delete-btn" onclick="deleteItem('journal', ${i})">🗑️</button></td>
+                </tr>`;
+            });
+
+            generateAllLinks();
+        }
+
+        // --- AJOUTS ---
+        function addSuivi() { listSuivi.push({ title: "La Frenchie & le Huskie", phase: "Premier Jet", motsEcrits: 0, motsTotal: 90000, chapEcrits: 0, chapTotal: 50, estimation: "Non commencé", color1: "#ff6b81", color2: "#ff4757" }); buildTables(); }
+        function addCercle() { listCercle.push({ label: "Nouvel Objectif", score: 0, total: 10000, color1: "#ff6b81", color2: "#ff4757" }); buildTables(); }
+        function addSaga() { listSaga.push({ title: "Nouveau Roman", c1: "1", c2: "0", c3: "0", c4: "0", c5: "0", c6: "0", c7: "-", c8: "Romance", color: "#ff6b81" }); buildTables(); }
+        function addFiche() { listFiche.push({ title: "Nouveau Roman", genre: "Romance", sub: "-", univ: "-", amb: "Mots", tropes: "Tropes", quote: "", illu: "", color1: "#ff6b81", color2: "#ff4757" }); buildTables(); }
+        function addEditorial() { listEditorial.push({ name: "Suivi Éditorial", v1: "0", v2: "0 €", v3: "-", v4: "0", v5: "0 sur 0" }); buildTables(); }
+        function addChecklist() { listChecklist.push({ title: "Nouveau Roman", step: 1, d1: "-", d2: "-", d3: "-", d4: "-", d5: "-", d6: "-", color: "#ff6b81" }); buildTables(); }
+        function addJournal() { listJournal.push({ title: "Journal de Bord", date: "auto", obj: "", chap: "", deci: "", idee: "", illu: "" }); buildTables(); }
+
+        // --- SUPPRESSIONS ---
+        function deleteItem(type, index) {
+            if (type === 'suivi') listSuivi.splice(index, 1);
+            if (type === 'cercle') listCercle.splice(index, 1);
+            if (type === 'saga') listSaga.splice(index, 1);
+            if (type === 'fiche') listFiche.splice(index, 1);
+            if (type === 'editorial') listEditorial.splice(index, 1);
+            if (type === 'checklist') listChecklist.splice(index, 1);
+            if (type === 'journal') listJournal.splice(index, 1);
+            buildTables();
+        }
+
+        // --- ENREGISTREMENT ---
+        function saveAll() {
+            localStorage.setItem('v2_suivi', JSON.stringify(listSuivi));
+            localStorage.setItem('v2_cercle', JSON.stringify(listCercle));
+            localStorage.setItem('v2_saga', JSON.stringify(listSaga));
+            localStorage.setItem('v2_fiche', JSON.stringify(listFiche));
+            localStorage.setItem('v2_editorial', JSON.stringify(listEditorial));
+            localStorage.setItem('v2_checklist', JSON.stringify(listChecklist));
+            localStorage.setItem('v2_journal', JSON.stringify(listJournal));
+            generateAllLinks();
+            alert("Sauvegarde réussie ! Vos liens magiques sont à jour.");
+        }
+
+    // --- GÉNÉRATION DES LIENS MAGIQUES (VERSION CORRIGÉE ET ROBUSTE) ---
+        function generateAllLinks() {
+            const baseUrl = window.location.href.replace('index.html', '').split('?')[0];
+
+            function createRow(containerId, title, url) {
+                const container = document.getElementById(containerId);
+                const row = document.createElement("div");
+                row.className = "link-row";
+                row.innerHTML = `<span>${title}</span>`;
+                
+                const btn = document.createElement("button");
+                btn.className = "copy-btn";
+                btn.innerText = "Copier le lien";
+                
+                // C'est ici que ça change : on attache l'événement proprement
+                btn.addEventListener('click', () => {
+                    navigator.clipboard.writeText(url).then(() => {
+                        alert("Lien copié : " + title);
+                    }).catch(err => {
+                        console.error('Erreur de copie: ', err);
+                    });
+                });
+                
+                row.appendChild(btn);
+                container.appendChild(row);
+            }
+
+            // 1. Suivi d'Écriture
+            const lSuivi = document.getElementById("links-suivi"); lSuivi.innerHTML = "<strong>Liens Suivi d'Écriture :</strong>";
+            listSuivi.forEach(p => {
+                const url = `${baseUrl}suivi-ecriture.html?titre=${encodeURIComponent(p.title)}&phase=${encodeURIComponent(p.phase)}&mots=${p.motsEcrits}&total=${p.motsTotal}&chap=${p.chapEcrits}&chaptotal=${p.chapTotal}&estimation=${encodeURIComponent(p.estimation)}&color1=${encodeURIComponent(p.color1)}&color2=${encodeURIComponent(p.color2)}`;
+                createRow("links-suivi", p.title, url);
+            });
+
+            // 2. Cercles
+            const lCercle = document.getElementById("links-cercle"); lCercle.innerHTML = "<strong>Liens Cercles de Progression :</strong>";
+            listCercle.forEach(c => {
+                const url = `${baseUrl}progression-cercle.html?label=${encodeURIComponent(c.label)}&score=${c.score}&total=${c.total}&color1=${encodeURIComponent(c.color1)}&color2=${encodeURIComponent(c.color2)}`;
+                createRow("links-cercle", c.label, url);
+            });
+
+            // 3. Sagas
+            const lSaga = document.getElementById("links-saga"); lSaga.innerHTML = "<strong>Liens Stats de Saga :</strong>";
+            listSaga.forEach(s => {
+                const url = `${baseUrl}stats-saga.html?title=${encodeURIComponent(s.title)}&c1=${encodeURIComponent(s.c1)}&c2=${encodeURIComponent(s.c2)}&c3=${encodeURIComponent(s.c3)}&c4=${encodeURIComponent(s.c4)}&c5=${encodeURIComponent(s.c5)}&c6=${encodeURIComponent(s.c6)}&c7=${encodeURIComponent(s.c7)}&c8=${encodeURIComponent(s.c8)}&color=${encodeURIComponent(s.color)}`;
+                createRow("links-saga", s.title, url);
+            });
+
+            // 4. Fiches (Maintenant corrigé !)
+            const lFiche = document.getElementById("links-fiche"); lFiche.innerHTML = "<strong>Liens Fiches Romans :</strong>";
+            listFiche.forEach(f => {
+                const url = `${baseUrl}fiches-projets.html?title=${encodeURIComponent(f.title)}&genre=${encodeURIComponent(f.genre)}&sub=${encodeURIComponent(f.sub)}&univ=${encodeURIComponent(f.univ)}&amb=${encodeURIComponent(f.amb)}&tropes=${encodeURIComponent(f.tropes)}&quote=${encodeURIComponent(f.quote)}&illu=${encodeURIComponent(f.illu)}&color1=${encodeURIComponent(f.color1)}&color2=${encodeURIComponent(f.color2)}`;
+                createRow("links-fiche", f.title, url);
+            });
+
+            // 5. Éditorial
+            const lEdito = document.getElementById("links-editorial"); lEdito.innerHTML = "<strong>Liens Suivi Éditorial :</strong>";
+            listEditorial.forEach(e => {
+                const url = `${baseUrl}suivi-editorial.html?name=${encodeURIComponent(e.name)}&v1=${encodeURIComponent(e.v1)}&v2=${encodeURIComponent(e.v2)}&v3=${encodeURIComponent(e.v3)}&v4=${encodeURIComponent(e.v4)}&v5=${encodeURIComponent(e.v5)}`;
+                createRow("links-editorial", e.name, url);
+            });
+
+            // 6. Checklist
+            const lCheck = document.getElementById("links-checklist"); lCheck.innerHTML = "<strong>Liens Checklist de Publication :</strong>";
+            listChecklist.forEach(c => {
+                const url = `${baseUrl}checklist.html?title=${encodeURIComponent(c.title)}&step=${c.step}&d1=${encodeURIComponent(c.d1)}&d2=${encodeURIComponent(c.d2)}&d3=${encodeURIComponent(c.d3)}&d4=${encodeURIComponent(c.d4)}&d5=${encodeURIComponent(c.d5)}&d6=${encodeURIComponent(c.d6)}&color=${encodeURIComponent(c.color)}`;
+                createRow("links-checklist", c.title, url);
+            });
+
+            // 7. Journal de Bord
+            const lJournal = document.getElementById("links-journal"); lJournal.innerHTML = "<strong>Liens Journal de Bord :</strong>";
+            listJournal.forEach(j => {
+                const url = `${baseUrl}journal-de-bord.html?title=${encodeURIComponent(j.title)}&date=${encodeURIComponent(j.date)}&obj=${encodeURIComponent(j.obj)}&chap=${encodeURIComponent(j.chap)}&deci=${encodeURIComponent(j.deci)}&idee=${encodeURIComponent(j.idee)}&illu=${encodeURIComponent(j.illu)}`;
+                createRow("links-journal", j.title, url);
+            });
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => alert("Lien copié dans le presse-papier !"));
+        }
+
+        buildTables();
+    </script>
+</body>
+</html>
