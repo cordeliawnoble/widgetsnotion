@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journal de Bord</title>
+    <style>
+        :root {
+            --paper: #f5efe4;
+            --paper-deep: #efe7d8;
+            --ink: #241a10;
+            --ink-soft: #4a3b2a;
+            --accent: #6b5a8e;
+        }
+
+        body {
+            margin: 0;
+            padding: 10px;
+            background: transparent;
+            font-family: 'Georgia', serif;
+            display: flex;
+            justify-content: center;
+        }
+
+        .journal-card {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            min-height: 420px;
+            border-radius: 18px;
+            overflow: hidden;
+            background: linear-gradient(120deg, var(--paper) 0%, var(--paper-deep) 100%);
+            border: 1px solid rgba(36, 26, 16, 0.25);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18), inset 0 0 60px rgba(120, 95, 60, 0.08);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Illustration à droite, fondue dans le papier */
+        .illu-layer {
+            position: absolute;
+            top: 0; right: 0; bottom: 0;
+            width: 62%;
+            background-size: cover;
+            background-position: center right;
+            display: none;
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.55) 35%, black 65%);
+            mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.55) 35%, black 65%);
+        }
+
+        /* Marge de reliure : petites coches à gauche */
+        .binding-ticks {
+            position: absolute;
+            top: 90px; bottom: 30px; left: 26px;
+            width: 8px;
+            background-image: repeating-linear-gradient(
+                to bottom,
+                rgba(36, 26, 16, 0.45) 0px,
+                rgba(36, 26, 16, 0.45) 2px,
+                transparent 2px,
+                transparent 34px
+            );
+            background-size: 8px 100%;
+            background-repeat: no-repeat;
+        }
+        .binding-ticks::before {
+            content: "";
+            position: absolute;
+            top: -6px; bottom: -6px; left: 14px;
+            border-left: 1px solid rgba(36, 26, 16, 0.12);
+        }
+
+        .journal-header {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 26px 34px 10px 34px;
+        }
+
+        .header-icon {
+            width: 34px; height: 34px;
+            border-radius: 6px;
+            border: 2px solid var(--ink-soft);
+            box-shadow: inset 0 0 0 3px var(--paper), inset 0 0 0 5px rgba(74, 59, 42, 0.5);
+            background: linear-gradient(135deg, #8a7a65, #5f5142);
+            flex-shrink: 0;
+        }
+
+        .journal-title {
+            font-size: 21px;
+            font-weight: bold;
+            letter-spacing: 2.5px;
+            color: var(--ink);
+            font-variant: small-caps;
+            text-transform: uppercase;
+        }
+
+        .journal-body {
+            position: relative;
+            z-index: 2;
+            padding: 12px 34px 30px 58px;
+            max-width: 52%;
+            box-sizing: border-box;
+            flex-grow: 1;
+        }
+
+        .entry { margin-bottom: 18px; }
+        .entry:last-child { margin-bottom: 0; }
+
+        .entry-label {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--ink);
+            margin-bottom: 4px;
+        }
+
+        .entry-value {
+            font-size: 14.5px;
+            line-height: 1.55;
+            color: var(--ink-soft);
+        }
+
+        .entry-value.quote { font-style: italic; }
+        .entry.hidden { display: none; }
+
+        /* Sans illustration, le texte peut respirer sur toute la largeur */
+        .journal-card.no-illu .journal-body { max-width: 100%; }
+
+        @media (max-width: 560px) {
+            .illu-layer { width: 100%; opacity: 0.25; -webkit-mask-image: none; mask-image: none; }
+            .journal-body { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="journal-card no-illu" id="card">
+        <div class="illu-layer" id="illuLayer"></div>
+        <div class="binding-ticks"></div>
+
+        <div class="journal-header">
+            <div class="header-icon"></div>
+            <div class="journal-title" id="valTitle">Journal de Bord</div>
+        </div>
+
+        <div class="journal-body">
+            <div class="entry" id="rowDate">
+                <div class="entry-label">Aujourd'hui</div>
+                <div class="entry-value" id="valDate">-</div>
+            </div>
+            <div class="entry" id="rowObj">
+                <div class="entry-label">Objectif du jour</div>
+                <div class="entry-value" id="valObj">-</div>
+            </div>
+            <div class="entry" id="rowChap">
+                <div class="entry-label">Chapitres travaillés</div>
+                <div class="entry-value" id="valChap">-</div>
+            </div>
+            <div class="entry" id="rowDeci">
+                <div class="entry-label">Décision importante</div>
+                <div class="entry-value" id="valDeci">-</div>
+            </div>
+            <div class="entry" id="rowIdee">
+                <div class="entry-label">Idée / Inspiration</div>
+                <div class="entry-value quote" id="valIdee">-</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const p = new URLSearchParams(window.location.search);
+
+        // Titre du journal (permet un journal par roman)
+        document.getElementById('valTitle').innerText = p.get('title') || "Journal de Bord";
+
+        // Date : paramètre "date", ou date du jour automatique si "auto"
+        let dateTxt = p.get('date') || "auto";
+        if (dateTxt === "auto") {
+            dateTxt = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
+        document.getElementById('valDate').innerText = dateTxt;
+
+        // Champs texte : masqués si vides, pour une carte toujours propre
+        const fill = (param, valId, rowId, prefix, suffix) => {
+            const v = p.get(param);
+            if (v && v.trim() !== "") {
+                document.getElementById(valId).innerText = (prefix || "") + v.trim() + (suffix || "");
+            } else {
+                document.getElementById(rowId).classList.add('hidden');
+            }
+        };
+        fill('obj',  'valObj',  'rowObj');
+        fill('chap', 'valChap', 'rowChap');
+        fill('deci', 'valDeci', 'rowDeci');
+        fill('idee', 'valIdee', 'rowIdee', '“ ', ' ”');
+
+        // Illustration optionnelle, fondue à droite
+        const illu = p.get('illu');
+        if (illu && illu.trim() !== "") {
+            const layer = document.getElementById('illuLayer');
+            layer.style.backgroundImage = `url("${illu.trim().replace(/"/g, '')}")`;
+            layer.style.display = "block";
+            document.getElementById('card').classList.remove('no-illu');
+        }
+
+        // Couleurs personnalisables (papier et encre) pour s'accorder à chaque univers
+        if (p.get('paper')) document.documentElement.style.setProperty('--paper', p.get('paper'));
+        if (p.get('ink'))   document.documentElement.style.setProperty('--ink',   p.get('ink'));
+    </script>
+</body>
+</html>
