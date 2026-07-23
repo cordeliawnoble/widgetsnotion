@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Générateur de Noms & Prénoms Notion</title>
+  <style>
+    :root {
+      --bg-color: #f7f6f3;
+      --card-bg: #ffffff;
+      --text-color: #37352f;
+      --border-color: #e9e9e7;
+      --accent-color: #2eaadc;
+      --accent-hover: #0882a9;
+    }
+       body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    h2 {
+      margin-top: 0;
+      font-size: 1.2rem;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .form-group {
+      margin-bottom: 12px;
+    }
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      opacity: 0.8;
+    }
+    select, input, button {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: var(--text-color);
+      font-size: 0.95rem;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: var(--accent-color);
+      color: #fff;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background-color: var(--accent-hover);
+    }
+    .results {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .name-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: var(--bg-color);
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      font-size: 1rem;
+      font-weight: 500;
+    }
+    .copy-btn {
+      width: auto;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      margin: 0;
+      background: transparent;
+      color: var(--accent-color);
+      border: 1px solid var(--accent-color);
+    }
+    .copy-btn:hover {
+      background: var(--accent-color);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>🎲 Générateur de Personnages</h2>
+  
+  <div class="form-group">
+    <label for="origin">Origine / Époque</label>
+    <select id="origin">
+      <option value="vieux_fr">🇫🇷 Vieux prénom français</option>
+      <option value="vieux_en">🇬🇧 Vieux prénom anglais</option>
+      <option value="vieux_ie">🇮🇪 Vieux prénom irlandais</option>
+      <option value="vieux_sco">🏴󠁧󠁢󠁳󠁣󠁴󠁿 Vieux prénom écossais</option>
+      <option value="vieux_it">🇮🇹 Vieux prénom italien</option>
+      <option value="vieux_es">🇪🇸 Vieux prénom espagnol</option>
+      <option value="vieux_de">🇩🇪 Vieux prénom allemand</option>
+      <option value="vieux_nor">🇳🇴 Vieux prénom nordique</option>
+      <option value="mod_fr">🇫🇷 Français moderne</option>
+      <option value="mod_en">🇺🇸/🇬🇧 Anglo-Américain moderne</option>
+      <option value="mod_it">🇮🇹 Italien moderne</option>
+      <option value="mod_es">🇪🇸 Espagnol moderne</option>
+      <option value="mod_jp">🇯🇵 Japonais</option>
+      <option value="mod_ar">🇲🇦/🇩🇿 Arabe / Moyen-Orient</option>
+      <option value="mod_in">🇮🇳 Indien</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="gender">Sexe / Genre</label>
+    <select id="gender">
+      <option value="M">Homme</option>
+      <option value="F">Femme</option>
+      <option value="U">Neutre / Indifférencié</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="count">Nombre de propositions</label>
+    <input type="number" id="count" value="3" min="1" max="10">
+  </div>
+
+  <button onclick="generateNames()">Générer</button>
+
+  <div class="results" id="results"></div>
+</div>
+
+<script>
+const DB = {
+  vieux_fr: {
+    M: ["Godefroi", "Clovis", "Philibert", "Thibault", "Barthélémy", "Léonard", "Amaury", "Anselme"],
+    F: ["Clotilde", "Mathilde", "Geneviève", "Isabeau", "Blanche", "Bérénice", "Ermengarde", "Mahaut"],
+    U: ["Avis", "Eustache", "Raimel"],
+    surnames: ["de Montmirail", "du Bois", "de la Tour", "Charpentier", "Lefèvre", "Beaumont", "Rochefort"]
+  },
+  vieux_en: {
+    M: ["Aethelred", "Oswald", "Dunstan", "Eadward", "Gideon", "Cedric", "Archibald", "Barnaby"],
+    F: ["Eadburh", "Rowena", "Edith", "Aethelflad", "Mildred", "Griselda", "Beatrice", "Prudence"],
+    U: ["Blythe", "Robin", "Evelyn"],
+    surnames: ["Blackwood", "Pemberton", "Lancaster", "Chamberlain", "Finch", "Winterbottom"]
+  },
+  vieux_ie: {
+    M: ["Cormac", "Tadgh", "Connall", "Bran", "Fintan", "Oisín", "Cathal", "Malachy"],
+    F: ["Aoife", "Sorcha", "Caoimhe", "Deirdre", "Gráinne", "Maeve", "Eithne", "Fiadh"],
+    U: ["Rory", "Dara", "Ronan"],
+    surnames: ["O'Flaherty", "MacCarthy", "O'Neill", "O'Sullivan", "MacGuire", "O'Rourke"]
+  },
+  vieux_sco: {
+    M: ["Alistair", "Hamish", "Callum", "Malcolm", "Lachlan", "Duncan", "Gavin", "Kenneth"],
+    F: ["Elspeth", "Morag", "Isobel", "Kenna", "Ailsa", "Fiona", "Maisie", "Flora"],
+    U: ["Blair", "Cameron", "Leslie"],
+    surnames: ["MacLeod", "MacKenzie", "Campbell", "Fraser", "Sinclair", "Robertson"]
+  },
+  vieux_it: {
+    M: ["Gian Galeazzo", "Ludovico", "Cosimo", "Bartolomeo", "Niccolò", "Cesare", "Matteo"],
+    F: ["Ginevra", "Ippolita", "Beatrice", "Lucrezia", "Caterina", "Bianca", "Eleonora"],
+    U: ["Fiore", "Celeste"],
+    surnames: ["d'Este", "Medici", "Sforza", "Visconti", "Gonzaga", "Colonna"]
+  },
+  vieux_es: {
+    M: ["Pelayo", "Rodrigo", "Gonzalo", "Alfonso", "Sancho", "Ramiro", "Hernán"],
+    F: ["Urraca", "Jimena", "Mencía", "Inés", "Berenguela", "Sancha", "Elvira"],
+    U: ["Cruz", "Reyes"],
+    surnames: ["de la Vega", "Mendoza", "Guzmán", "Córdoba", "Álvarez", "Benavides"]
+  },
+  vieux_de: {
+    M: ["Siegfried", "Otto", "Leopold", "Heinrich", "Wolfgang", "Friedrich", "Albrecht"],
+    F: ["Brunhilde", "Hildegard", "Gisela", "Kriemhild", "Walburga", "Hedwig", "Lieselotte"],
+    U: ["Gottlieb", "Minne"],
+    surnames: ["von Hohenzollern", "Schneider", "Hoffmann", "von Bern", "Krueger"]
+  },
+  vieux_nor: {
+    M: ["Einar", "Leif", "Ivar", "Sigurd", "Ragnar", "Björn", "Torstein", "Hakon"],
+    F: ["Astrid", "Sigrid", "Freydis", "Ingrid", "Gudrun", "Lagertha", "Aslog"],
+    U: ["Kari", "Rune"],
+    surnames: ["Eriksson", "Haraldsson", "Lindqvist", "Torvalds", "Ström"]
+  },
+  mod_fr: {
+    M: ["Julien", "Lucas", "Hugo", "Gabriel", "Théo"],
+    F: ["Camille", "Emma", "Léa", "Chloé", "Manon"],
+    U: ["Sacha", "Charlie", "Eden"],
+    surnames: ["Martin", "Bernard", "Thomas", "Petit", "Dubois"]
+  },
+  mod_en: {
+    M: ["Liam", "Ethan", "Oliver", "Noah", "James"],
+    F: ["Olivia", "Amelia", "Charlotte", "Sophia", "Ava"],
+    U: ["Jordan", "Taylor", "Morgan"],
+    surnames: ["Smith", "Johnson", "Williams", "Brown", "Jones"]
+  },
+  mod_it: {
+    M: ["Leonardo", "Francesco", "Alessandro", "Lorenzo"],
+    F: ["Sofia", "Giulia", "Aurora", "Alice"],
+    U: ["Andrea"],
+    surnames: ["Rossi", "Russo", "Ferrari", "Esposito"]
+  },
+  mod_es: {
+    M: ["Mateo", "Santiago", "Matías", "Sebastián"],
+    F: ["Sofia", "Valentina", "Isabella", "Camila"],
+    U: ["Guadalupe"],
+    surnames: ["García", "Rodríguez", "González", "Fernández"]
+  },
+  mod_jp: {
+    M: ["Ren", "Hiroto", "Sora", "Minato"],
+    F: ["Himari", "Hina", "Yua", "Aoi"],
+    U: ["Ren", "Aoi"],
+    surnames: ["Sato", "Suzuki", "Takahashi", "Tanaka"]
+  },
+  mod_ar: {
+    M: ["Youssef", "Adam", "Amine", "Karim"],
+    F: ["Lina", "Yasmine", "Nour", "Inès"],
+    U: ["Nour", "Ihsan"],
+    surnames: ["Benali", "El Amrani", "Alaoui", "Bennani"]
+  },
+  mod_in: {
+    M: ["Aarav", "Vihaan", "Vivaan", "Ananya"],
+    F: ["Aadhya", "Ananya", "Diya", "Pari"],
+    U: ["Arya", "Kiran"],
+    surnames: ["Sharma", "Verma", "Gupta", "Patel"]
+  }
+};
+
+function getRandom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function generateNames() {
+  const origin = document.getElementById("origin").value;
+  const gender = document.getElementById("gender").value;
+  const count = parseInt(document.getElementById("count").value) || 3;
+  const resultsDiv = document.getElementById("results");
+
+  resultsDiv.innerHTML = "";
+
+  const data = DB[origin] || DB.mod_fr;
+
+  for (let i = 0; i < count; i++) {
+    let namesList = data[gender];
+    if (!namesList || namesList.length === 0) {
+      namesList = [...(data.M || []), ...(data.F || [])];
+    }
+    
+    const firstName = getRandom(namesList);
+    const lastName = getRandom(data.surnames);
+    const fullName = `${firstName} ${lastName}`;
+
+    const card = document.createElement("div");
+    card.className = "name-card";
+    card.innerHTML = `
+      <span>${fullName}</span>
+      <button class="copy-btn" onclick="copyToClipboard('${fullName}')">Copier</button>
+    `;
+    resultsDiv.appendChild(card);
+  }
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text);
+}
+
+// Initial generation
+generateNames();
+</script>
+
+</body>
+</html>
