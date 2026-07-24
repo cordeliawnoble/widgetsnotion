@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Pipette Couleurs</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: #f4f4f9;
+    }
+    .card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+      background: #0066ff;
+      color: white;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    button:hover { background: #0052cc; }
+    .color-box {
+      width: 100%;
+      height: 60px;
+      margin-top: 1.5rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: monospace;
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>Pipette à couleur</h2>
+    <button id="pick-btn">Prendre une couleur</button>
+    <div id="result" class="color-box">#------</div>
+  </div>
+
+  <script>
+    const btn = document.getElementById('pick-btn');
+    const resultDiv = document.getElementById('result');
+
+    btn.addEventListener('click', async () => {
+      // 1. Vérifie si le navigateur supporte l'API EyeDropper
+      if (!('EyeDropper' in window)) {
+        alert("Désolé, votre navigateur ne supporte pas l'API EyeDropper.");
+        return;
+      }
+
+      const eyeDropper = new EyeDropper();
+
+      try {
+        // 2. Ouvre la pipette native
+        const result = await eyeDropper.open();
+        
+        // 3. Affiche le code HEX et applique la couleur en fond
+        const hexColor = result.sRGBHex;
+        resultDiv.textContent = hexColor;
+        resultDiv.style.backgroundColor = hexColor;
+
+        // Ajuste la couleur du texte (blanc ou noir) selon le fond
+        resultDiv.style.color = getLuminance(hexColor) > 0.5 ? '#000' : '#fff';
+
+      } catch (e) {
+        // L'utilisateur a annulé la sélection (touche Échap)
+        console.log("Sélection annulée");
+      }
+    });
+
+    // Fonction bonus pour adapter le texte (noir/blanc) selon la clarté
+    function getLuminance(hex) {
+      const rgb = parseInt(hex.slice(1), 16);
+      const r = (rgb >> 16) & 0xff, g = (rgb >>  8) & 0xff, b = (rgb >>  0) & 0xff;
+      return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    }
+  </script>
+
+</body>
+</html>
